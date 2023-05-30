@@ -24,7 +24,9 @@ function copyDirectory(source, destination) {
 }
 
 function modifyFunctionsPhp(slugifiedThemeName) {
-  const functionsPhpPath = `build_result/web/wp-content/themes/${slugifiedThemeName}/functions.php`;
+  const currentDirectory = process.cwd();
+  console.log("Current working directory:", currentDirectory);
+  const functionsPhpPath = `${currentDirectory}/${slugifiedThemeName}/theme/functions.php`;
   const functionsPhpContent = fs.readFileSync(functionsPhpPath, "utf8");
   const modifiedContent = functionsPhpContent.replace(
     "<?php",
@@ -50,12 +52,17 @@ rl.question("Enter the theme name: ", (themeName) => {
     replacement: "-",
   });
 
+  // Remove build_result directory if it exists
+  if (fs.existsSync("build_result")) {
+    fs.rmSync("build_result", { recursive: true, force: true });
+  }
+
   // Create build_result directory
   fs.mkdirSync("build_result");
 
   // Copy composer.json
   fs.copyFileSync(
-    "repo_root/custom_templates/composer.json",
+    "custom_templates/composer.json",
     "build_result/composer.json"
   );
 
@@ -74,6 +81,7 @@ rl.question("Enter the theme name: ", (themeName) => {
   process.chdir("build_result");
 
   // Run composer install
+  execSync("composer update", { stdio: "inherit" });
   execSync("composer install", { stdio: "inherit" });
 
   // Create web/wp-content/themes directory
@@ -92,18 +100,22 @@ rl.question("Enter the theme name: ", (themeName) => {
 
   // Copy victoria directory and application.php
   copyDirectory(
-    "../../../../repo_root/custom_templates/theme/victoria",
+    "../../../../custom_templates/victoria",
+    `${slugifiedThemeName}/victoria`
+  );
+  // Copy victoria directory and application.php
+  copyDirectory(
+    "../../../../custom_templates/victoria",
     `${slugifiedThemeName}/victoria`
   );
   fs.copyFileSync(
-    "../../../../repo_root/custom_templates/theme/application.php",
+    "../../../../custom_templates/application.php",
     `${slugifiedThemeName}/application.php`
   );
 
   // Modify functions.php
   modifyFunctionsPhp(slugifiedThemeName);
 
-  // Find and replace in file-header.css
   // Find and replace in file-header.css
   const fileHeaderCssPath = `${slugifiedThemeName}/tailwind/custom/file-header.css`;
   const replacements = [
