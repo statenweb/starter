@@ -119,16 +119,12 @@ rl.question("Enter the theme name: ", async (themeName) => {
   // Copy victoria directory and application.php
   copyDirectory(
     "../../../../custom_templates/victoria",
-    `${slugifiedThemeName}/victoria`
+    `${slugifiedThemeName}/theme/victoria`
   );
-  // Copy victoria directory and application.php
-  copyDirectory(
-    "../../../../custom_templates/victoria",
-    `${slugifiedThemeName}/victoria`
-  );
+
   fs.copyFileSync(
     "../../../../custom_templates/application.php",
-    `${slugifiedThemeName}/application.php`
+    `${slugifiedThemeName}/theme/application.php`
   );
 
   // Modify functions.php

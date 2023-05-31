@@ -34,3 +34,17 @@ $namespace = ['Victoria'];
 	}
 );
 
+$actions = new Actions;
+$actions->init();
+
+$enqueues = new Enqueues();
+$enqueues->init();
+
+$filters = new Filters();
+$filters->init();
+
+$site = new Site();
+$site->init();
+
+$hero = new Hero();
+$hero->init();
