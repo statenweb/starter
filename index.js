@@ -60,6 +60,7 @@ rl.question("Enter the theme name: ", async (themeName) => {
   // Create build_result directory
 
   fs.mkdirSync("build_result/web/wp-content", { recursive: true });
+  copyDirectory("custom_templates/config", "build_result/config");
 
   ["index.php", "wp-config.php"].forEach((file) =>
     fs.copyFileSync(`custom_templates/${file}`, `build_result/web/${file}`)
