@@ -4,6 +4,7 @@
   "description": "Node.js application for building themes",
   "main": "index.js",
   "dependencies": {
+    "gittar": "^0.1.1",
     "slugify": "^1.5.3"
   },
   "scripts": {

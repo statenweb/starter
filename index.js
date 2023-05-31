@@ -43,7 +43,7 @@ function findAndReplaceInFile(filePath, replacements) {
   fs.writeFileSync(filePath, content);
 }
 
-rl.question("Enter the theme name: ", (themeName) => {
+rl.question("Enter the theme name: ", async (themeName) => {
   rl.close();
 
   const slugifiedThemeName = slugify(themeName, {
@@ -58,7 +58,24 @@ rl.question("Enter the theme name: ", (themeName) => {
   }
 
   // Create build_result directory
-  fs.mkdirSync("build_result");
+
+  fs.mkdirSync("build_result/web/wp-content", { recursive: true });
+
+  ["index.php", "wp-config.php"].forEach((file) =>
+    fs.copyFileSync(`custom_templates/${file}`, `build_result/web/${file}`)
+  );
+
+  Array("uploads", "mu-plugins", "plugins", "themes").forEach((directory) => {
+    const baseDir = `build_result/web/wp-content/${directory}`;
+    fs.mkdirSync(`${baseDir}`);
+    fs.copyFileSync("custom_templates/.gitkeep", `${baseDir}/.gitkeep`);
+  });
+
+  // Copy .env.example
+  fs.copyFileSync("custom_templates/.env.example", "build_result/.env.example");
+
+  // Copy .gitignore
+  fs.copyFileSync("custom_templates/.gitignore", "build_result/.gitignore");
 
   // Copy composer.json
   fs.copyFileSync(
@@ -96,7 +113,7 @@ rl.question("Enter the theme name: ", (themeName) => {
   );
 
   // Remove .git directory
-  fs.rmdirSync(`${slugifiedThemeName}/.git`, { recursive: true });
+  fs.rmSync(`${slugifiedThemeName}/.git`, { recursive: true });
 
   // Copy victoria directory and application.php
   copyDirectory(
@@ -135,6 +152,6 @@ rl.question("Enter the theme name: ", (themeName) => {
     ],
   ];
   findAndReplaceInFile(fileHeaderCssPath, replacements);
-
-  console.log("Theme build completed!");
+  const currentDirectory = process.cwd();
+  console.log("Theme build completed!", currentDirectory);
 });

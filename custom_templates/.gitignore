@@ -1,0 +1,48 @@
+# Application
+web/wp-content/plugins/*
+!web/wp-content/plugins/.gitkeep
+web/wp-content/mu-plugins/*/
+web/wp-content/upgrade
+web/wp-content/uploads/*
+!web/wp-content/uploads/.gitkeep
+web/wp-content/logs
+
+web/logs
+
+
+# WordPress
+web/wp
+web/.htaccess
+
+# Dotenv
+.env
+.env.*
+!.env.example
+
+# Composer
+/vendor
+
+# WP-CLI
+wp-cli.local.yml
+
+web/wp-content/advanced-cache.php
+web/wp-content/cache/
+web/wp-content/w3tc-cache/
+web/wp-content/mu-plugins/wp-migrate-db-pro-compatibility.php
+web/wp-content/wflogs/
+web/wp-content/wp-rocket-config/
+web/wp-content/mu-plugins/mu-require.php
+web/wp-content/updraft
+web/wp-content/themes/blocksy/
+
+
+
+uploads.zip
+foo.php
+autoptimize_404_handler.php
+
+web/wp-content/themes/Divi
+web/wp-content/themes/divi
+web/wp-content/themes/blocksy
+web/wp-content/themes/astra
+Copied
