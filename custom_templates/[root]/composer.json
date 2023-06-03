@@ -1,0 +1,93 @@
+{
+  "name": "statenweb/{SLUGIFIED_THEME_NAME}",
+  "type": "project",
+  "license": "MIT",
+  "description": "Custom build for {THEME_NAME}",
+  "homepage": "https://statenweb.com",
+  "authors": [
+    {
+      "name": "Mat Gargano",
+      "email": "mat@statenweb.com",
+      "homepage": "https://github.com/matgargano"
+    }
+  ],
+  "keywords": [],
+  "config": {
+    "preferred-install": "dist",
+    "allow-plugins": {
+      "composer/installers": true,
+      "roots/wordpress-core-installer": true
+    }
+  },
+  "repositories": [
+    {
+      "type": "composer",
+      "url": "https://composer.freemius.com/packages.json?authorization=Basic+bWF0QHN0YXRlbndlYi5jb206OFFnNW1uWkxScEs5aDZneFF5UWpKNzJiRWdzOFl0RnNTSTJBNFdoSWlpbw%3D%3D"
+    },
+    {
+      "type": "composer",
+      "url": "https://wpackagist.org"
+    },
+    {
+      "type": "composer",
+      "url": "https://satis.statenweb.com"
+    },
+    {
+      "type": "composer",
+      "url": "https://composer.deliciousbrains.com/A3E1F7021543E61F2196AADB74515E59"
+    }
+  ],
+  "require": {
+    "php": ">=8.0",
+    "roots/wp-config": "1.0.0",
+    "vlucas/phpdotenv": "^3.3",
+    "oscarotero/env": "^1.0",
+    "statenweb-plugin/advanced-custom-fields-pro": "^6",
+    "deliciousbrains-plugin/wp-migrate-db-pro": "^2.5",
+    "wpackagist-plugin/stream": "^3.2",
+    "wpackagist-plugin/spinupwp": "^1.4",
+    "wpackagist-plugin/safe-svg": "^2.0",
+    "wpackagist-plugin/wp-ses": "^1.4",
+    "roots/wordpress": "^6.0",
+    "composer/installers": "~1.4",
+    "wpackagist-plugin/disable-comments": "^2.4",
+    "wpackagist-plugin/fluentform": "^4.3",
+    "statenweb-plugin/fluentformpro": "^4.3",
+    "wpackagist-plugin/regenerate-thumbnails": "^3.1",
+    "statenweb-plugin/envira-gallery": "^1.9",
+    "statenweb-plugin/wp-retina-2x-pro": "^6.1",
+    "wpackagist-plugin/acf-medium-editor-field": "^3.0",
+    "wpackagist-plugin/seo-by-rank-math": "^1.0",
+    "statenweb-plugin/seo-by-rank-math-pro": "^3.0",
+    "wpackagist-plugin/code-snippets": "^3.3",
+    "wpackagist-plugin/crop-thumbnails": "^1.5"
+  },
+  "require-dev": {
+    "squizlabs/php_codesniffer": "^3.7",
+    "wp-coding-standards/wpcs": "^2.3",
+    "phpmd/phpmd": "^2.13",
+    "friendsofphp/php-cs-fixer": "^3.15"
+  },
+  "extra": {
+    "installer-paths": {
+      "web/wp-content/mu-plugins/{$name}/": [
+        "type:wordpress-muplugin"
+      ],
+      "web/wp-content/plugins/{$name}/": [
+        "type:wordpress-plugin"
+      ],
+      "web/wp-content/themes/{$name}/": [
+        "type:wordpress-theme"
+      ]
+    },
+    "wordpress-install-dir": "web/wp"
+  },
+  "scripts": {
+    "lint": [
+      "vendor/bin/phpcs ./web/wp-content/themes/{SLUGIFIED_THEME_NAME}/  -d memory_limit=512M --ignore=*.js,./web/wp-content/themes/{SLUGIFIED_THEME_NAME}/vendor/*,*.css --error-severity=1 --warning-severity=6"
+    ],
+    "code-fixer": [
+      "vendor/bin/phpcbf ./web/wp-content/themes/{SLUGIFIED_THEME_NAME}/  -d memory_limit=512M --ignore=*.js,./web/wp-content/themes/{SLUGIFIED_THEME_NAME}/vendor/*,*.css --error-severity=1 --warning-severity=6"
+    ]
+  }
+}

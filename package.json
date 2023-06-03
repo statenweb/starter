@@ -5,6 +5,7 @@
   "main": "index.js",
   "dependencies": {
     "gittar": "^0.1.1",
+    "recursive-copy": "^2.0.14",
     "slugify": "^1.5.3"
   },
   "scripts": {

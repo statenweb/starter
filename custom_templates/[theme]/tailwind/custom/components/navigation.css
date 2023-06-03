@@ -1,0 +1,137 @@
+.menu-list {
+	@apply flex gap-10;
+}
+.menu-toggler ~ .responsive-menu {
+	@apply transition-all duration-300 mobile-only:h-full mobile-only:w-full mobile-only:bg-white mobile-only:fixed mobile-only:top-0 mobile-only:left-0 mobile-only:flex mobile-only:justify-center mobile-only:-translate-y-[100%] mobile-only:overflow-y-auto;
+}
+
+.menu-toggler ~ .responsive-menu .menu-list {
+	@apply flex mobile-only:flex-col mobile-only:h-full mobile-only:gap-10 mobile-only:pt-[128px] mobile-only:w-full mobile-only:text-center mobile-only:text-2xl;
+}
+
+.menu-toggler[aria-expanded="true"] ~ .responsive-menu{
+	@apply mobile-only:translate-y-[0]
+}
+
+.menu-toggler[aria-expanded="true"] div  div:nth-child(1) {
+	@apply -rotate-45;
+}
+
+.menu-toggler[aria-expanded="true"] div div:nth-child(2) {
+	@apply relative -top-[10px] rotate-45;
+}
+
+.menu-toggler[aria-expanded="true"] div div:nth-child(3) {
+	@apply hidden;
+}
+
+
+.menu-item-has-children {
+	@apply relative  mobile-only:inline-block;
+
+}
+
+.menu-item {
+	@apply uppercase;
+}
+.dropdown-toggle {@apply relative;}
+
+.dropdown-toggle:after {
+	@apply top-[50%] absolute right-[-30px] md:right-[-22px]  h-[8px] w-[14px] text-[14px] mobile-only:right-[-40px] transform duration-200 bg-contain bg-no-repeat translate-y-[-50%];
+	background-image:url("data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8'%3F%3E%3Csvg id='Layer_1' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 341.34 170.67'%3E%3Cdefs%3E%3Cstyle%3E.cls-1%7Bfill:%23010101%3B%7D%3C/style%3E%3C/defs%3E%3Cg id='line'%3E%3Cpath class='cls-1' d='M7.45 37.53L156.78 165.53c7.99 6.85 19.78 6.85 27.77 0L333.89 37.53c8.95-7.67 9.98-21.14 2.31-30.08-7.67-8.95-21.14-9.98-30.08-2.31h0L170.67 121.24 35.22 5.14C26.28-2.53 12.81-1.5 5.14 7.45S-1.5 29.87 7.45 37.53h0Z'/%3E%3C/g%3E%3C/svg%3E");
+	background-size:14px 8px;
+
+	content:'';
+
+}
+.dropdown-toggle-l2.active:after,
+.dropdown-toggle.active:after {
+	background-image: url("data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8'%3F%3E%3Csvg id='Layer_1' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 341.34 170.67'%3E%3Cg id='line'%3E%3Cpath d='M333.89 133.14L184.56 5.14c-7.99-6.85-19.78-6.85-27.77 0L7.45 133.14c-8.95 7.67-9.98 21.14-2.31 30.08 7.67 8.95 21.14 9.98 30.08 2.31h0L170.67 49.43l135.45 116.1c8.95 7.67 22.42 6.63 30.08-2.31s6.63-22.42-2.31-30.08h0Z'/%3E%3C/g%3E%3C/svg%3E") !important;
+}
+
+
+.menu-item .dropdown-menu {
+	@apply top-full w-[350px] max-w-[350px] bg-white flex-col z-[100] px-5 md:py-2  md:border-t-[5px] last:border-b-[0px] rounded-b-xl mobile-only:text-[18px] mobile-only:leading-[18px];
+}
+
+.is-pinned.scrolling-up .menu-item .dropdown-menu,
+.scrolling-down.is-pinned .menu-item .dropdown-menu {
+	@apply top-[42px];
+}
+
+.is-pinned.scrolling-up .menu-item .dropdown-menu .dropdown-menu,
+.scrolling-down.is-pinned .menu-item .dropdown-menu .dropdown-menu {
+	@apply top-0;
+}
+
+.menu-contracted .primary-menu {
+	@apply hidden xl:flex;
+}
+.menu-expanded {@apply max-h-screen overflow-hidden;}
+
+.dropdown .dropdown-menu.l1 .menu-item-has-children .dropdown-item {@apply relative;}
+.dropdown-toggle-l2:after,
+.dropdown .dropdown-menu.l1 .menu-item-has-children .dropdown-item:after {
+	content:"";
+	@apply top-[50%] absolute right-[10px] h-[8px] w-[14px] text-[14px] mobile-only:right-[-40px] transform duration-200 bg-contain bg-no-repeat translate-y-[-50%];
+	background-image:url("data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8'%3F%3E%3Csvg id='Layer_1' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 341.34 170.67'%3E%3Cdefs%3E%3Cstyle%3E.cls-1%7Bfill:%23010101%3B%7D%3C/style%3E%3C/defs%3E%3Cg id='line'%3E%3Cpath class='cls-1' d='M7.45 37.53L156.78 165.53c7.99 6.85 19.78 6.85 27.77 0L333.89 37.53c8.95-7.67 9.98-21.14 2.31-30.08-7.67-8.95-21.14-9.98-30.08-2.31h0L170.67 121.24 35.22 5.14C26.28-2.53 12.81-1.5 5.14 7.45S-1.5 29.87 7.45 37.53h0Z'/%3E%3C/g%3E%3C/svg%3E");
+
+}
+.dropdown-toggle-l2:after {
+	@apply mobile-only:right-[40px] !important
+}
+.dropdown-toggle-l2:after {
+	@apply -right-[30px];
+}
+
+.dropdown .dropdown-menu.l1 .l2 .dropdown-item:after {
+	background-image:none;
+}
+.menu-item .dropdown-menu.l1 {
+	@apply mobile-only:w-full mobile-only:max-w-full absolute;
+
+}
+
+.dropdown-toggle-l2 {
+	@apply normal-case;
+}
+
+.menu-item .dropdown-menu .dropdown-menu {
+	@apply relative top-0 p-0 border-t-0 max-w-[auto] w-[auto] shadow-none;
+
+
+}
+
+
+
+.dropdown-item{
+	@apply block py-3 normal-case  md:border-b-[1px];
+}
+
+.dropdown-menu .menu-item:last-child a {
+	border-color:transparent;
+}
+
+.current_page_parent > a,
+.current_page_item > a {
+	@apply  relative;
+}
+
+
+
+.current_page_parent > a:before,
+.current_page_item > a:before {
+	content:'';
+
+
+}
+
+
+.current_page_parent.dropdown > a:before  {
+	@apply bottom-[-50%] w-[75%] absolute h-[3px];
+
+}
+
+.bg-search {
+	background-image: url("data:image/svg+xml,%3C%3Fxml version='1.0' encoding='utf-8'%3F%3E%3C!-- Generator: Adobe Illustrator 26.4.1  SVG Export Plug-In . SVG Version: 6.00 Build 0) --%3E%3Csvg version='1.1' id='Layer_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' viewBox='0 0 29 29' style='enable-background:new 0 0 29 29%3B' xml:space='preserve'%3E%3Cstyle type='text/css'%3E.st0%7Bfill:%23011C50%3B%7D.st1%7Bfill:%23FFFFFF%3B%7D%3C/style%3E%3Cpath class='st0' d='M5 0h19c2.8 0 5 2.2 5 5v19c0 2.8-2.2 5-5 5H5c-2.8 0-5-2.2-5-5V5C0 2.2 2.2 0 5 0z'/%3E%3Cpath class='st1' d='M21.8 20.1L19 17.3c0.9-1.2 1.4-2.6 1.4-4.1c0-1.3-0.4-2.6-1.1-3.7c-0.7-1.1-1.8-2-3-2.5c-1.2-0.5-2.6-0.6-3.9-0.4S9.9 7.6 9 8.5c-0.9 0.9-1.6 2.1-1.8 3.4s-0.1 2.6 0.4 3.9s1.4 2.3 2.5 3c1.1 0.7 2.4 1.1 3.7 1.1c1.5 0 2.9-0.5 4.1-1.4l2.8 2.8c0.1 0.1 0.2 0.1 0.3 0.2s0.2 0.1 0.3 0.1s0.2 0 0.3-0.1c0.1 0 0.2-0.1 0.3-0.2c0.1-0.1 0.1-0.2 0.2-0.3c0-0.1 0.1-0.2 0.1-0.3s0-0.2-0.1-0.3S21.9 20.2 21.8 20.1z M8.7 13.2c0-1 0.3-2 0.8-2.8c0.5-0.8 1.3-1.5 2.2-1.8c0.9-0.4 1.9-0.5 2.9-0.3c1 0.2 1.9 0.7 2.6 1.4c0.7 0.7 1.2 1.6 1.4 2.6c0.2 1 0.1 2-0.3 2.9c-0.4 0.9-1 1.7-1.8 2.2c-0.8 0.5-1.8 0.8-2.8 0.8c-1.3 0-2.6-0.5-3.5-1.5C9.3 15.8 8.7 14.6 8.7 13.2z'/%3E%3C/svg%3E");
+}

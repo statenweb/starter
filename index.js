@@ -1,10 +1,21 @@
 const fs = require("fs");
 const path = require("path");
+const copy = require("recursive-copy");
 
 const readline = require("readline");
 const { execSync } = require("child_process");
 const { spawnSync } = require("child_process");
 const slugify = require("slugify");
+
+const copyFiles = (sourceDir, targetDir) => {
+  copy(sourceDir, targetDir, { overwrite: true }, (error, results) => {
+    if (error) {
+      console.error("Error:", error);
+    } else {
+      console.log("Files copied:", results.length);
+    }
+  });
+};
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -139,28 +150,20 @@ rl.question("Enter the theme name: ", async (themeName) => {
   // Remove .git directory
   fs.rmSync(`${slugifiedThemeName}/.git`, { recursive: true });
 
-  // create acf-json directory
+  // HANDLE SYNC
 
-  copyDirectory(
-    "../../../../custom_templates/acf-json",
-    `${slugifiedThemeName}/theme/acf-json`
-  );
+  const syncDirectories = [
+    {
+      source: "../../../../custom_templates/[theme]",
+      target: "../../../../build_result",
+    },
+    {
+      source: "../../../../custom_templates/[theme]",
+      target: slugifiedThemeName,
+    },
+  ];
 
-  // Copy victoria directory and application.php
-  copyDirectory(
-    "../../../../custom_templates/victoria",
-    `${slugifiedThemeName}/theme/victoria`
-  );
-
-  copyDirectory(
-    "../../../../custom_templates/block",
-    `${slugifiedThemeName}/theme/block`
-  );
-
-  fs.copyFileSync(
-    "../../../../custom_templates/application.php",
-    `${slugifiedThemeName}/theme/application.php`
-  );
+  syncDirectories.forEach(({ source, target }) => copyFiles(source, target));
 
   // Modify functions.php
   modifyFunctionsPhp(slugifiedThemeName);
