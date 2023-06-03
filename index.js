@@ -1,4 +1,6 @@
 const fs = require("fs");
+const path = require("path");
+
 const readline = require("readline");
 const { execSync } = require("child_process");
 const { spawnSync } = require("child_process");
@@ -25,7 +27,7 @@ function copyDirectory(source, destination) {
 
 function modifyFunctionsPhp(slugifiedThemeName) {
   const currentDirectory = process.cwd();
-  console.log("Current working directory:", currentDirectory);
+
   const functionsPhpPath = `${currentDirectory}/${slugifiedThemeName}/theme/functions.php`;
   const functionsPhpContent = fs.readFileSync(functionsPhpPath, "utf8");
   const modifiedContent = functionsPhpContent.replace(
@@ -113,13 +115,46 @@ rl.question("Enter the theme name: ", async (themeName) => {
     { stdio: "inherit" }
   );
 
+  //MODIFY FILE
+
+  const tailwindConfigLocation = `${slugifiedThemeName}/tailwind/tailwind.config.js`;
+  const configPath = path.resolve(tailwindConfigLocation);
+
+  const configContent = fs.readFileSync(configPath, "utf8");
+  const newFunction = `
+  function ({ addVariant }) {
+    addVariant('mobile-only', "@media screen and (max-width: theme('screens.md'))")
+  }
+`;
+
+  const updatedConfigContent = configContent.replace(
+    /(plugins:\s*\[)([\s\S]*?)(\s*]\s*)/,
+    (match, start, plugins, end) => {
+      const modifiedPlugins = plugins.replace(/,\s*$/, "");
+      return `${start}${modifiedPlugins}${newFunction}${end}`;
+    }
+  );
+
+  fs.writeFileSync(configPath, updatedConfigContent, "utf8");
   // Remove .git directory
   fs.rmSync(`${slugifiedThemeName}/.git`, { recursive: true });
+
+  // create acf-json directory
+
+  copyDirectory(
+    "../../../../custom_templates/acf-json",
+    `${slugifiedThemeName}/theme/acf-json`
+  );
 
   // Copy victoria directory and application.php
   copyDirectory(
     "../../../../custom_templates/victoria",
     `${slugifiedThemeName}/theme/victoria`
+  );
+
+  copyDirectory(
+    "../../../../custom_templates/block",
+    `${slugifiedThemeName}/theme/block`
   );
 
   fs.copyFileSync(
