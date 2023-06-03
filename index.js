@@ -1,60 +1,52 @@
 const fs = require("fs");
 const path = require("path");
 const copy = require("recursive-copy");
-
+const { promisify } = require("util");
 const readline = require("readline");
 const { execSync } = require("child_process");
 const { spawnSync } = require("child_process");
 const slugify = require("slugify");
 
-const copyFiles = (sourceDir, targetDir) => {
-  copy(sourceDir, targetDir, { overwrite: true }, (error, results) => {
-    if (error) {
-      console.error("Error:", error);
-    } else {
-      console.log("Files copied:", results.length);
-    }
-  });
+const copyFiles = async (sourceDir, targetDir) => {
+  const copyAsync = promisify(copy);
+
+  try {
+    await copyAsync(sourceDir, targetDir, { overwrite: true });
+    console.log("Files copied successfully.");
+  } catch (error) {
+    console.error("Error:", error);
+  }
 };
 
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout,
-});
-
-function copyDirectory(source, destination) {
-  fs.mkdirSync(destination, { recursive: true });
-  const files = fs.readdirSync(source);
-  for (const file of files) {
-    const sourcePath = `${source}/${file}`;
-    const destinationPath = `${destination}/${file}`;
-    if (fs.lstatSync(sourcePath).isDirectory()) {
-      copyDirectory(sourcePath, destinationPath);
-    } else {
-      fs.copyFileSync(sourcePath, destinationPath);
-    }
-  }
-}
-
-function modifyFunctionsPhp(slugifiedThemeName) {
-  const currentDirectory = process.cwd();
-
-  const functionsPhpPath = `${currentDirectory}/${slugifiedThemeName}/theme/functions.php`;
+const modifyFunctionsPhp = (themeDirectory) => {
+  const functionsPhpPath = `${themeDirectory}/theme/functions.php`;
   const functionsPhpContent = fs.readFileSync(functionsPhpPath, "utf8");
   const modifiedContent = functionsPhpContent.replace(
     "<?php",
     `<?php\nrequire_once __DIR__ . '/application.php';`
   );
   fs.writeFileSync(functionsPhpPath, modifiedContent);
-}
+};
 
-function findAndReplaceInFile(filePath, replacements) {
+const findAndReplaceInFile = (filePath, replacements) => {
   let content = fs.readFileSync(filePath, "utf8");
   for (const [search, replace] of replacements) {
     content = content.replace(new RegExp(search, "g"), replace);
   }
   fs.writeFileSync(filePath, content);
-}
+};
+
+const scriptRootDirectory = process.cwd();
+const buildResultDirectory = `${scriptRootDirectory}/build_result`;
+const customizationDirectory = `${scriptRootDirectory}/custom_templates`;
+const rootCustomizationDirectory = `${customizationDirectory}/[root]`;
+const themeCustomizationDirectory = `${customizationDirectory}/[theme]`;
+const composerFileLocation = `${rootCustomizationDirectory}/composer.json`;
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
 
 rl.question("Enter the theme name: ", async (themeName) => {
   rl.close();
@@ -65,70 +57,30 @@ rl.question("Enter the theme name: ", async (themeName) => {
     replacement: "-",
   });
 
+  const buildResultDirectoryThemeBase = `${buildResultDirectory}/web/wp-content/themes/${slugifiedThemeName}`;
+
   // Remove build_result directory if it exists
-  if (fs.existsSync("build_result")) {
-    fs.rmSync("build_result", { recursive: true, force: true });
+  if (fs.existsSync(buildResultDirectory)) {
+    fs.rmSync(buildResultDirectory, { recursive: true, force: true });
   }
 
-  // Create build_result directory
-
-  fs.mkdirSync("build_result/web/wp-content", { recursive: true });
-  copyDirectory("custom_templates/config", "build_result/config");
-
-  ["index.php", "wp-config.php"].forEach((file) =>
-    fs.copyFileSync(`custom_templates/${file}`, `build_result/web/${file}`)
-  );
-
-  Array("uploads", "mu-plugins", "plugins", "themes").forEach((directory) => {
-    const baseDir = `build_result/web/wp-content/${directory}`;
-    fs.mkdirSync(`${baseDir}`);
-    fs.copyFileSync("custom_templates/.gitkeep", `${baseDir}/.gitkeep`);
-  });
-
-  // Copy .env.example
-  fs.copyFileSync("custom_templates/.env.example", "build_result/.env.example");
-
-  // Copy .gitignore
-  fs.copyFileSync("custom_templates/.gitignore", "build_result/.gitignore");
-
-  // Copy composer.json
-  fs.copyFileSync(
-    "custom_templates/composer.json",
-    "build_result/composer.json"
-  );
-
-  // Read the copied composer.json
-  const composerJson = fs.readFileSync("build_result/composer.json", "utf8");
-
-  // Replace '{THEME_NAME}' and '{SLUGIFIED_THEME_NAME}' in composer.json
-  const replacedComposerJson = composerJson
-    .replace(/{THEME_NAME}/g, themeName)
-    .replace(/{SLUGIFIED_THEME_NAME}/g, slugifiedThemeName);
-
-  // Write the replaced composer.json
-  fs.writeFileSync("build_result/composer.json", replacedComposerJson);
-
-  // Change to build_result directory
-  process.chdir("build_result");
-
-  // Run composer install
-  execSync("composer update", { stdio: "inherit" });
-  execSync("composer install", { stdio: "inherit" });
-
   // Create web/wp-content/themes directory
-  fs.mkdirSync("web/wp-content/themes", { recursive: true });
-  process.chdir("web/wp-content/themes");
+  fs.mkdirSync(`${buildResultDirectoryThemeBase}`, { recursive: true });
 
   // Clone repository
   spawnSync(
     "git",
-    ["clone", "git@github.com:gregsullivan/_tw.git", slugifiedThemeName],
+    [
+      "clone",
+      "git@github.com:gregsullivan/_tw.git",
+      buildResultDirectoryThemeBase,
+    ],
     { stdio: "inherit" }
   );
 
-  //MODIFY FILE
+  // MODIFY FILE
 
-  const tailwindConfigLocation = `${slugifiedThemeName}/tailwind/tailwind.config.js`;
+  const tailwindConfigLocation = `${buildResultDirectoryThemeBase}/tailwind/tailwind.config.js`;
   const configPath = path.resolve(tailwindConfigLocation);
 
   const configContent = fs.readFileSync(configPath, "utf8");
@@ -147,29 +99,38 @@ rl.question("Enter the theme name: ", async (themeName) => {
   );
 
   fs.writeFileSync(configPath, updatedConfigContent, "utf8");
+
   // Remove .git directory
-  fs.rmSync(`${slugifiedThemeName}/.git`, { recursive: true });
+  fs.rmSync(`${buildResultDirectoryThemeBase}/.git`, { recursive: true });
 
   // HANDLE SYNC
 
   const syncDirectories = [
     {
-      source: "../../../../custom_templates/[theme]",
-      target: "../../../../build_result",
+      source: rootCustomizationDirectory,
+      target: buildResultDirectory,
     },
     {
-      source: "../../../../custom_templates/[theme]",
-      target: slugifiedThemeName,
+      source: themeCustomizationDirectory,
+      target: buildResultDirectoryThemeBase,
     },
   ];
 
-  syncDirectories.forEach(({ source, target }) => copyFiles(source, target));
+  console.log("Syncing directories...");
+  try {
+    for (const { source, target } of syncDirectories) {
+      await copyFiles(source, target);
+    }
+    console.log("Directories synced successfully.");
+  } catch (error) {
+    console.error("Error syncing directories:", error);
+  }
 
   // Modify functions.php
-  modifyFunctionsPhp(slugifiedThemeName);
+  modifyFunctionsPhp(buildResultDirectoryThemeBase);
 
   // Find and replace in file-header.css
-  const fileHeaderCssPath = `${slugifiedThemeName}/tailwind/custom/file-header.css`;
+  const fileHeaderCssPath = `${buildResultDirectoryThemeBase}/tailwind/custom/file-header.css`;
   const replacements = [
     ["Theme Name: _tw", `Theme Name: ${themeName}`],
     [
@@ -187,6 +148,28 @@ rl.question("Enter the theme name: ", async (themeName) => {
     ],
   ];
   findAndReplaceInFile(fileHeaderCssPath, replacements);
-  const currentDirectory = process.cwd();
-  console.log("Theme build completed!", currentDirectory);
+  console.log("File updated: file-header.css");
+
+  const composerJson = fs.readFileSync(composerFileLocation, "utf8");
+
+  // Replace '{THEME_NAME}' and '{SLUGIFIED_THEME_NAME}' in composer.json
+  const replacedComposerJson = composerJson
+    .replace(/{THEME_NAME}/g, themeName)
+    .replace(/{SLUGIFIED_THEME_NAME}/g, slugifiedThemeName);
+
+  // Write the replaced composer.json
+  fs.writeFileSync(composerFileLocation, replacedComposerJson);
+  console.log("File updated: composer.json");
+
+  // Change to build_result directory
+  process.chdir(buildResultDirectory);
+  console.log("Changed directory to:", buildResultDirectory);
+
+  // Run composer install
+  console.log("Running composer install...");
+  execSync("composer update", { stdio: "inherit" });
+  execSync("composer install", { stdio: "inherit" });
+  console.log("Composer install completed.");
+
+  console.log("Theme build completed!");
 });

@@ -6,5 +6,4 @@
  */
 require_once dirname(__DIR__) . '/vendor/autoload.php';
 require_once dirname(__DIR__) . '/config/application.php';
-define( 'WP_CACHE', false ); //RabbitLoader
 require_once ABSPATH . 'wp-settings.php';

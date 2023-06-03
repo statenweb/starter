@@ -2,11 +2,11 @@
 
 namespace Victoria;
 
-    /**
-	 * Tailwind_Navwalker class.
-	 *
-	 * @extends Walker_Nav_Menu
-	 */
+/**
+ * Tailwind_Navwalker class.
+ *
+ * @extends Walker_Nav_Menu
+ */
 class Tailwind_Navwalker extends \Walker_Nav_Menu {
 
 
@@ -33,8 +33,8 @@ class Tailwind_Navwalker extends \Walker_Nav_Menu {
 		$indent = str_repeat( $t, $depth );
 		// Default class to add to the file.
 		$class_names = '';
-		$classes_depth_1 = array( 'dropdown-menu', 'l1', 'hidden', 'lg:absolute hamburger:mt-4' );
-		$classes_depth_2 = array( 'dropdown-menu', 'l2', 'ml-5',  'hidden', '');
+		$classes_depth_1 = array( 'dropdown-menu', 'l1', 'hidden', 'shadow-2xl' );
+		$classes_depth_2 = array( 'dropdown-menu', 'l2', 'ml-5');
 		/**
 		 * Filters the CSS class(es) applied to a menu list element.
 		 *
@@ -95,8 +95,6 @@ class Tailwind_Navwalker extends \Walker_Nav_Menu {
 		$indent = ( $depth ) ? str_repeat( $t, $depth ) : '';
 
 		$classes = empty( $item->classes ) ? array() : (array) $item->classes;
-
-		$classes = apply_filters('nav_extra_classes', $classes, $item, $args, $depth);
 
 		// Initialize some holder variables to store specially handled item
 		// wrappers and icons.
@@ -185,11 +183,10 @@ class Tailwind_Navwalker extends \Walker_Nav_Menu {
 
 			$atts['href'] = ! empty( $item->url ) ? $item->url : '#';
 			// Items in dropdowns use .dropdown-item instead of .nav-link.
-
 			if ( $depth > 0 ) {
 				$atts['class'] = 'dropdown-item';
 			} else {
-				$atts['class'] = 'nav-link hover:text-white duration-300 transition-all text-[16px]';
+				$atts['class'] = 'nav-link ';
 			}
 			if ( isset( $args->has_children ) && $args->has_children && 1 === $depth && $args->depth > 1 ){
 				$atts['class'] = 'dropdown-toggle-l2 relative dropdown-item';
