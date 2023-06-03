@@ -7,15 +7,18 @@ const { execSync } = require("child_process");
 const { spawnSync } = require("child_process");
 const slugify = require("slugify");
 
-const copyFiles = async (sourceDir, targetDir) => {
-  const copyAsync = promisify(copy);
-
-  try {
-    await copyAsync(sourceDir, targetDir, { overwrite: true });
-    console.log("Files copied successfully.");
-  } catch (error) {
-    console.error("Error:", error);
-  }
+const copyFiles = (sourceDir, targetDir) => {
+  return new Promise((resolve, reject) => {
+    copy(sourceDir, targetDir, { overwrite: true, dot: true }, (error) => {
+      if (error) {
+        console.error("Error:", error);
+        reject(error);
+      } else {
+        console.log("Files copied successfully.");
+        resolve();
+      }
+    });
+  });
 };
 
 const modifyFunctionsPhp = (themeDirectory) => {
@@ -36,13 +39,6 @@ const findAndReplaceInFile = (filePath, replacements) => {
   fs.writeFileSync(filePath, content);
 };
 
-const scriptRootDirectory = process.cwd();
-const buildResultDirectory = `${scriptRootDirectory}/build_result`;
-const customizationDirectory = `${scriptRootDirectory}/custom_templates`;
-const rootCustomizationDirectory = `${customizationDirectory}/[root]`;
-const themeCustomizationDirectory = `${customizationDirectory}/[theme]`;
-const composerFileLocation = `${rootCustomizationDirectory}/composer.json`;
-
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout,
@@ -50,6 +46,13 @@ const rl = readline.createInterface({
 
 rl.question("Enter the theme name: ", async (themeName) => {
   rl.close();
+
+  const scriptRootDirectory = process.cwd();
+  const buildResultDirectory = `${scriptRootDirectory}/build_result`;
+  const customizationDirectory = `${scriptRootDirectory}/custom_templates`;
+  const rootCustomizationDirectory = `${customizationDirectory}/[root]`;
+  const themeCustomizationDirectory = `${customizationDirectory}/[theme]`;
+  const composerFileLocation = `${rootCustomizationDirectory}/composer.json`;
 
   const slugifiedThemeName = slugify(themeName, {
     lower: true,
