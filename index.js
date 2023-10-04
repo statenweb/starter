@@ -53,7 +53,9 @@ rl.question("Enter the theme name: ", async (themeName) => {
   const rootCustomizationDirectory = `${customizationDirectory}/[root]`;
   const themeCustomizationDirectory = `${customizationDirectory}/[theme]`;
   const composerFileLocation = `${rootCustomizationDirectory}/composer.json`;
-  const fileHeaderCssFile = `${themeCustomizationDirectory}/tailwind/file-header.css`;
+  const buildResultDirectoryThemeBase = `${buildResultDirectory}/web/wp-content/themes/${slugifiedThemeName}`;
+
+  const fileHeaderCssFile = `${buildResultDirectoryThemeBase}/tailwind/file-header.css`;
 
   const slugifiedThemeName = slugify(themeName, {
     lower: true,
@@ -61,14 +63,12 @@ rl.question("Enter the theme name: ", async (themeName) => {
     replacement: "-",
   });
 
+  console.log("Updated file-header.css.");
+
   findAndReplaceInFile(fileHeaderCssFile, [
     ["{THEME_NAME}", themeName],
     ["{SLUGIFIED_THEME_NAME}", slugifiedThemeName],
   ]);
-
-  console.log("Updated file-header.css.");
-
-  const buildResultDirectoryThemeBase = `${buildResultDirectory}/web/wp-content/themes/${slugifiedThemeName}`;
 
   // Remove build_result directory if it exists
   if (fs.existsSync(buildResultDirectory)) {
