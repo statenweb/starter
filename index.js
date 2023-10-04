@@ -53,12 +53,20 @@ rl.question("Enter the theme name: ", async (themeName) => {
   const rootCustomizationDirectory = `${customizationDirectory}/[root]`;
   const themeCustomizationDirectory = `${customizationDirectory}/[theme]`;
   const composerFileLocation = `${rootCustomizationDirectory}/composer.json`;
+  const fileHeaderCssFile = `${themeCustomizationDirectory}/tailwind/file-header.css`;
 
   const slugifiedThemeName = slugify(themeName, {
     lower: true,
     remove: /[^a-zA-Z0-9 -]/g,
     replacement: "-",
   });
+
+  findAndReplaceInFile(fileHeaderCssFile, [
+    ["{THEME_NAME}", themeName],
+    ["{SLUGIFIED_THEME_NAME}", slugifiedThemeName],
+  ]);
+
+  console.log("Updated file-header.css.");
 
   const buildResultDirectoryThemeBase = `${buildResultDirectory}/web/wp-content/themes/${slugifiedThemeName}`;
 
