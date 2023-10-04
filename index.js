@@ -53,22 +53,14 @@ rl.question("Enter the theme name: ", async (themeName) => {
   const rootCustomizationDirectory = `${customizationDirectory}/[root]`;
   const themeCustomizationDirectory = `${customizationDirectory}/[theme]`;
   const composerFileLocation = `${rootCustomizationDirectory}/composer.json`;
-  const buildResultDirectoryThemeBase = `${buildResultDirectory}/web/wp-content/themes/${slugifiedThemeName}`;
-
-  const fileHeaderCssFile = `${buildResultDirectoryThemeBase}/tailwind/file-header.css`;
-
   const slugifiedThemeName = slugify(themeName, {
     lower: true,
     remove: /[^a-zA-Z0-9 -]/g,
     replacement: "-",
   });
+  const buildResultDirectoryThemeBase = `${buildResultDirectory}/web/wp-content/themes/${slugifiedThemeName}`;
 
-  console.log("Updated file-header.css.");
-
-  findAndReplaceInFile(fileHeaderCssFile, [
-    ["{THEME_NAME}", themeName],
-    ["{SLUGIFIED_THEME_NAME}", slugifiedThemeName],
-  ]);
+  const fileHeaderCssFile = `${buildResultDirectoryThemeBase}/tailwind/file-header.css`;
 
   // Remove build_result directory if it exists
   if (fs.existsSync(buildResultDirectory)) {
@@ -146,6 +138,12 @@ rl.question("Enter the theme name: ", async (themeName) => {
   const replacedComposerJson = composerJson
     .replace(/{THEME_NAME}/g, themeName)
     .replace(/{SLUGIFIED_THEME_NAME}/g, slugifiedThemeName);
+
+  findAndReplaceInFile(fileHeaderCssFile, [
+    ["{THEME_NAME}", themeName],
+    ["{SLUGIFIED_THEME_NAME}", slugifiedThemeName],
+  ]);
+  console.log("Updated file-header.css.");
 
   // Write the replaced composer.json
   fs.writeFileSync(composerFileLocation, replacedComposerJson);
