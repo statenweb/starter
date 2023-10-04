@@ -140,27 +140,6 @@ rl.question("Enter the theme name: ", async (themeName) => {
   // Modify functions.php
   modifyFunctionsPhp(buildResultDirectoryThemeBase);
 
-  // Find and replace in file-header.css
-  const fileHeaderCssPath = `${buildResultDirectoryThemeBase}/tailwind/custom/file-header.css`;
-  const replacements = [
-    ["Theme Name: _tw", `Theme Name: ${themeName}`],
-    [
-      "Theme URI: https://underscoretw.com/",
-      "Theme URI: https://statenweb.com/",
-    ],
-    ["Author: underscoretw.com", "Author: statenweb.com"],
-    [
-      "Author URI: https://underscoretw.com/",
-      "Author URI: https://statenweb.com/",
-    ],
-    [
-      "Description: A custom theme based on _tw",
-      `Description: A custom theme for ${themeName}`,
-    ],
-  ];
-  findAndReplaceInFile(fileHeaderCssPath, replacements);
-  console.log("File updated: file-header.css");
-
   const composerJson = fs.readFileSync(composerFileLocation, "utf8");
 
   // Replace '{THEME_NAME}' and '{SLUGIFIED_THEME_NAME}' in composer.json
