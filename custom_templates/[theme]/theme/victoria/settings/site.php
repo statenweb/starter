@@ -21,8 +21,8 @@ class Site extends Thing {
 		if ( function_exists( 'acf_add_options_sub_page' ) ) {
 			acf_add_options_sub_page(
 				array(
-					'page_title'  => 'Ossio Settings',
-					'menu_title'  => 'Ossio Settings',
+					'page_title'  => 'Site Settings',
+					'menu_title'  => 'Site Settings',
 					'menu_slug'   => self::SLUG,
 					'capability'  => 'edit_users',
 					'parent_slug' => 'options-general.php',
