@@ -6,7 +6,7 @@ use Victoria\Base\Thing;
 
 class Site extends Thing {
 
-	const SLUG = 'ossio_settings';
+	const SLUG = 'site_settings';
 
 	public function attach_hooks() {
 
