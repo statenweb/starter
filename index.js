@@ -20,7 +20,15 @@ const modifyFunctionsPhp = (dir) => {
 };
 function zipBuildResult(themeName, buildResultDirectory, downloadsDirectory) {
   // Define the filename based on SLUGIFIED_THEME_NAME
-  const filename = `${slugify(themeName)}-build-result.zip`;
+  const baseFilename = `${slugify(themeName)}`;
+  let filename = `${baseFilename}.zip`;
+
+  // Check if the filename already exists and append a number if necessary
+  let counter = 1;
+  while (fs.existsSync(path.join(downloadsDirectory, filename))) {
+    filename = `${baseFilename}-${counter}.zip`;
+    counter++;
+  }
 
   // Create a write stream for the zip file
   const output = fs.createWriteStream(path.join(downloadsDirectory, filename));
@@ -47,6 +55,7 @@ function zipBuildResult(themeName, buildResultDirectory, downloadsDirectory) {
   // Finalize the archive
   archive.finalize();
 }
+
 function deleteGitDirectories(directoryPath) {
   if (fs.existsSync(directoryPath)) {
     const files = fs.readdirSync(directoryPath);
@@ -221,6 +230,21 @@ const copyFiles = (sourceDir, targetDir) => {
       { stdio: "inherit" }
   );
   await applyFindAndReplaceToAllFiles(buildResultDirectory, config);
+  const composerJsonPath = path.join(buildResultDirectoryThemeBase, "composer.json");
+  const composerJsonContent = fs.readFileSync(composerJsonPath, "utf8");
+
+// Parse the JSON content
+  const composerJson = JSON.parse(composerJsonContent);
+
+// Add the "autoload" section
+  composerJson["autoload"] = {
+    "psr-4": {
+      "Victoria\\": "theme/victoria"
+    }
+  };
+
+// Write the updated content back to composer.json
+  fs.writeFileSync(composerJsonPath, JSON.stringify(composerJson, null, 2));
 
   // Change to build_result directory and perform composer install
   process.chdir(buildResultDirectory);
