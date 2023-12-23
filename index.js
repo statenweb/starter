@@ -9,12 +9,15 @@ const archiver = require("archiver");
 
 
 
-const newFunction = `
-  function ({ addVariant }) {
-    addVariant('mobile-only', "@media screen and (max-width: theme('screens.md'))")
-  }
-`;
-
+const modifyFunctionsPhp = (dir) => {
+  const functionsPhpPath = `${dir}/theme/functions.php`;
+  const functionsPhpContent = fs.readFileSync(functionsPhpPath, "utf8");
+  const modifiedContent = functionsPhpContent.replace(
+      "<?php",
+      `<?php\nrequire_once __DIR__ . '/../vendor/autoload.php';`
+  );
+  fs.writeFileSync(functionsPhpPath, modifiedContent);
+};
 function zipBuildResult(themeName, buildResultDirectory, downloadsDirectory) {
   // Define the filename based on SLUGIFIED_THEME_NAME
   const filename = `${slugify(themeName)}-build-result.zip`;
@@ -189,6 +192,16 @@ const copyFiles = (sourceDir, targetDir) => {
     addVariant('mobile-only', "@media screen and (max-width: theme('screens.md'))")
   }
 `;
+  modifyFunctionsPhp(buildResultDirectoryThemeBase);
+
+  const envExamplePath = path.join(buildResultDirectory, ".env.example");
+  const envPath = path.join(buildResultDirectory, ".env");
+
+// Read the content of .env.example
+  const envExampleContent = fs.readFileSync(envExamplePath, "utf8");
+
+// Write the content to .env
+  fs.writeFileSync(envPath, envExampleContent);
 
   const updatedConfigContent = configContent.replace(
       /(plugins:\s*\[)([\s\S]*?)(\s*]\s*)/,
