@@ -1,8 +1,8 @@
 {
-  "name": "statenweb/rand-dar",
+  "name": "statenweb/{THEME_NAME_SLUGIFIED}",
   "type": "project",
   "license": "MIT",
-  "description": "Custom build for rand dar",
+  "description": "Custom build for {THEME_NAME}",
   "homepage": "https://statenweb.com",
   "authors": [
     {

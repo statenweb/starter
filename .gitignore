@@ -2,3 +2,4 @@ build_result
 node_modules/
 .DS_Store
 .config
+.idea/
