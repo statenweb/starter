@@ -11,37 +11,37 @@
 				{
 					"name": "Body Background",
 					"slug": "body-background",
-					"color": "#111112"
+					"color": "{BODY_BACKGROUND}"
 				},
 				{
 					"name": "Body Text",
 					"slug": "body-text",
-					"color": "#333331"
+					"color": "{BODY_TEXT}"
 				},
 				{
 					"name": "Primary",
 					"slug": "primary",
-					"color": "#444441"
+					"color": "{PRIMARY}"
 				},
 				{
 					"name": "Secondary",
 					"slug": "secondary",
-					"color": "#555551"
+					"color": "{SECONDARY}"
 				},
 				{
 					"name": "Primary Text",
 					"slug": "primary-text",
-					"color": "#666661"
+					"color": "{PRIMARY_TEXT}"
 				},
 				{
 					"name": "Secondary Text",
 					"slug": "secondary-text",
-					"color": "#777771"
+					"color": "{SECONDARY_TEXT}"
 				},
 				{
 					"name": "Accent",
 					"slug": "accent",
-					"color": "#888881"
+					"color": "{ACCENT}"
 				}
 			],
 			"gradients": []
