@@ -141,7 +141,7 @@ async function generateTheme(themeConfig) {
 
     deleteGitDirectories(buildResultDirectory);
     const filename = zipBuildResult(themeConfig.THEME_NAME, buildResultDirectory, downloadsDirectory);
-    const downloadLink = `http://gensite.api.statenweb.com/downloads/${filename}.zip`;
+    const downloadLink = `http://gensite.api.statenweb.com/downloads/${filename}`;
     return downloadLink;
 }
 
