@@ -138,7 +138,7 @@ async function generateTheme(themeConfig) {
 
     // Add additional processing and logic here as needed
 
-    const downloadLink = `http://getsite.api.statenweb.com/downloads/${slugify(themeConfig.THEME_NAME, { lower: true })}.zip`;
+    const downloadLink = `http://gensite.api.statenweb.com/downloads/${slugify(themeConfig.THEME_NAME, { lower: true })}.zip`;
     zipBuildResult(themeConfig.THEME_NAME, buildResultDirectory, downloadsDirectory);
 
     return downloadLink;
