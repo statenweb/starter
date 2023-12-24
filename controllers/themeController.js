@@ -3,12 +3,13 @@ const {deleteOldDownloads} = require('../utils/deleteOldDownloads');
 
 
 exports.generateTheme = async (req, res) => {
+    const themeConfig = req.body;
     try {
-        const themeConfig = req.body;
+
         const downloadLink = await themeGenerator.generateTheme(themeConfig);
         deleteOldDownloads();
-        res.status(200).json({ message: "Theme generated successfully", downloadLink, success: true });
+        res.status(200).json({ message: `${themeConfig.THEME_NAME} theme generated successfully`, downloadLink, success: true });
     } catch (error) {
-        res.status(500).json({ message: "Error generating theme", error: error.message, success: false });
+        res.status(500).json({ message: `Error generating theme for ${themeConfig.THEME_NAME}}`, error: error.message, success: false });
     }
 };
