@@ -15,6 +15,7 @@ jobs:
 
       - name: Setup SSH Key
         run: |
+          mkdir -p ~/.ssh  # Create the .ssh directory if it doesn't exist
           echo "$PRIVATE_SSH_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan gensite.statenweb.com >> ~/.ssh/known_hosts
@@ -24,7 +25,7 @@ jobs:
       - name: Deploy to Server
         run: |
           ssh gensite-service@gensite.statenweb.com << 'ENDSSH'
-            cd /home/gensite-service/starter
+            cd /path/to/your/app
             git fetch --tags
             latest_tag=$(git describe --tags $(git rev-list --tags --max-count=1))
             git checkout $latest_tag
