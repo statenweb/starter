@@ -55,6 +55,7 @@ function zipBuildResult(themeName, buildResultDirectory, downloadsDirectory) {
     });
 
     archive.finalize();
+    return filename;
 }
 
 // Delete Git directories
@@ -138,9 +139,9 @@ async function generateTheme(themeConfig) {
 
     // Add additional processing and logic here as needed
 
-    const downloadLink = `http://gensite.api.statenweb.com/downloads/${slugify(themeConfig.THEME_NAME, { lower: true })}.zip`;
-    zipBuildResult(themeConfig.THEME_NAME, buildResultDirectory, downloadsDirectory);
-
+    deleteGitDirectories(buildResultDirectory);
+    const filename = zipBuildResult(themeConfig.THEME_NAME, buildResultDirectory, downloadsDirectory);
+    const downloadLink = `http://gensite.api.statenweb.com/downloads/${filename}.zip`;
     return downloadLink;
 }
 
