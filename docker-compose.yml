@@ -1,9 +1,9 @@
 version: "3"
 services:
   app:
-    build: .
+    build: /home/gensite/gensite
     volumes:
-      - ./downloads:/usr/src/app/downloads
+      - /home/gensite/gensite/downloads:/usr/src/app/downloads
     networks:
       - webnet
 
@@ -11,10 +11,22 @@ services:
     image: nginx:latest
     ports:
       - "80:80"
+      - "443:443"
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf
+      - /home/gensite/gensite/nginx.conf:/etc/nginx/nginx.conf
+      - /home/gensite/gensite/certs:/etc/letsencrypt
+      - /home/gensite/gensite/certbot/www:/var/www/certbot
     networks:
       - webnet
+
+  certbot:
+    image: certbot/certbot
+    volumes:
+      - /home/gensite/gensite/certs:/etc/letsencrypt
+      - /home/gensite/gensite/certbot/www:/var/www/certbot
+    depends_on:
+      - nginx
+    entrypoint: /bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'
 
 networks:
   webnet:
