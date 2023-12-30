@@ -7,6 +7,8 @@ const recursiveRead = require("recursive-readdir");
 const archiver = require("archiver");
 const copy = require("recursive-copy");
 
+const baseDirectory =
+  process.env.BASE_DIRECTORY || path.join(__dirname, "../workspace");
 // Modify functions.php file
 
 const copyFiles = async (sourceDir, targetDir) => {
@@ -113,8 +115,8 @@ function findAndReplaceInFile(filePath, replacements) {
 // Main function to generate the theme
 async function generateTheme(themeConfig) {
   const scriptRootDirectory = process.cwd();
-  const baseDirectory = path.join(__dirname, "../downloads/");
-  const downloadsDirectory = `${baseDirectory}/downloads`;
+
+  const downloadsDirectory = `${baseDirectory}/files`;
   const buildResultDirectory = `${baseDirectory}/build_result`;
   const customizationDirectory = `${baseDirectory}/custom_templates`;
 
@@ -153,7 +155,12 @@ async function generateTheme(themeConfig) {
     buildResultDirectory,
     downloadsDirectory
   );
-  const downloadLink = `http://service.statenwet.com/downloads/downloads/${filename}`;
+
+  const baseDownloadUrl =
+    process.env.BASE_DOWNLOAD_URL ||
+    "https://service.statenweb.com/workspace/files/";
+
+  const downloadLink = `${baseDownloadUrl}${filename}`;
   return downloadLink;
 }
 

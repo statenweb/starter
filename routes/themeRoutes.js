@@ -1,7 +1,8 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const themeController = require('../controllers/themeController');
+const themeController = require("../controllers/themeController");
 
-router.post('/generate', themeController.generateTheme);
+router.get("/", themeController.helloWorld);
+router.post("/generate", themeController.generateTheme);
 
 module.exports = router;
