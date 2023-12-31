@@ -7,11 +7,14 @@ const recursiveRead = require("recursive-readdir");
 const archiver = require("archiver");
 const copy = require("recursive-copy");
 const mkdirp = require("mkdirp");
-console.log("hmmm2");
-const workspaceDirectory =
-  process.env.WORKSPACE_DIRECTORY || path.join(__dirname, "../workspace");
 
 const baseDirectory = process.env.BASE_DIRECTORY || path.join(__dirname, "../");
+const workspaceDirectory =
+  process.env.WORKSPACE_DIRECTORY || path.join(__dirname, "../workspace");
+const buildResultDirectory = `${workspaceDirectory}/build_result`;
+
+const customizationDirectory = `${baseDirectory}/custom_templates`;
+
 // Modify functions.php file
 
 const copyFiles = async (sourceDir, targetDir) => {
@@ -21,7 +24,6 @@ const copyFiles = async (sourceDir, targetDir) => {
       expand: true,
       dot: true,
     });
-    console.log(`Files copied from ${sourceDir} to ${targetDir}.`);
   } catch (error) {
     console.error("Error copying files:", error);
     throw error; // Rethrow to handle it in the calling function
@@ -38,30 +40,23 @@ function modifyFunctionsPhp(dir) {
   fs.writeFileSync(functionsPhpPath, modifiedContent);
 }
 
-// Zip build result
-function zipBuildResult(themeName, buildResultDirectory, downloadsDirectory) {
-  console.log("hmmm");
-  const baseFilename = `${slugify(themeName, { lower: true })}`;
-  let filename = `${baseFilename}.zip`;
-
-  let counter = 1;
-  while (fs.existsSync(path.join(downloadsDirectory, filename))) {
-    filename = `${baseFilename}-${counter}.zip`;
-    counter++;
-  }
-
-  const output = fs.createWriteStream(path.join(downloadsDirectory, filename));
+async function zipBuildResult(themeName, buildResultDirectory, res) {
   const archive = archiver("zip", { zlib: { level: 9 } });
-  archive.pipe(output);
-  archive.directory(buildResultDirectory, false);
 
-  output.on("close", () => {
-    console.log(`Successfully zipped and saved as: ${filename}`);
-    // rimraf.sync(buildResultDirectory);
+  res.writeHead(200, {
+    "Content-Type": "application/zip",
+    "Content-Disposition": `attachment; filename="${slugify(themeName, {
+      lower: true,
+    })}.zip"`,
   });
 
-  archive.finalize();
-  return filename;
+  archive.on("error", function (err) {
+    throw err;
+  });
+
+  archive.pipe(res);
+  archive.directory(buildResultDirectory, false);
+  await archive.finalize();
 }
 
 // Delete Git directories
@@ -117,11 +112,7 @@ function findAndReplaceInFile(filePath, replacements) {
 }
 
 // Main function to generate the theme
-async function generateTheme(themeConfig) {
-  const buildResultDirectory = `${workspaceDirectory}/build_result`;
-  const downloadsDirectory = `${workspaceDirectory}/downloads`;
-  const customizationDirectory = `${baseDirectory}/custom_templates`;
-
+async function generateTheme(themeConfig, res) {
   if (!fs.existsSync(baseDirectory)) {
     mkdirp(baseDirectory);
   }
@@ -149,21 +140,10 @@ async function generateTheme(themeConfig) {
 
   modifyFunctionsPhp(themeDirectory);
 
-  // Add additional processing and logic here as needed
-
   deleteGitDirectories(buildResultDirectory);
-  const filename = zipBuildResult(
-    themeConfig.THEME_NAME,
-    buildResultDirectory,
-    downloadsDirectory
-  );
 
-  const baseDownloadUrl =
-    process.env.BASE_DOWNLOAD_URL ||
-    "https://service.statenweb.com/workspace/files/";
-
-  const downloadLink = `${baseDownloadUrl}${filename}`;
-  return downloadLink;
+  // Stream the ZIP file directly
+  await zipBuildResult(themeConfig.THEME_NAME, buildResultDirectory, res);
 }
 
 module.exports = { generateTheme };
