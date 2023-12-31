@@ -15,8 +15,6 @@ const buildResultDirectory = `${workspaceDirectory}/build_result`;
 
 const customizationDirectory = `${baseDirectory}/custom_templates`;
 
-// Modify functions.php file
-
 const copyFiles = async (sourceDir, targetDir) => {
   try {
     await copy(sourceDir, targetDir, {
@@ -29,6 +27,31 @@ const copyFiles = async (sourceDir, targetDir) => {
     throw error; // Rethrow to handle it in the calling function
   }
 };
+
+function modifyTailwindConfigJs(dir) {
+  const tailwindConfigJsPath = path.join(dir, "tailwind/tailwind.config.js");
+
+  // Read the existing file as a string
+  let configFileContents = fs.readFileSync(tailwindConfigJsPath, "utf8");
+
+  // Define the new plugin function as a string
+  const newPluginFunction = `
+      // New mobile-only variant
+      function({ addVariant }) {
+          addVariant('mobile-only', "@media screen and (max-width: theme('screens.md'))");
+      },
+  `;
+
+  // Insert the new plugin before the closing bracket of the plugins array
+  // Assuming the plugins array ends with '],'
+  configFileContents = configFileContents.replace(
+    /(\s+plugins: \[.*)(\],)/s, // Regex to find the plugins array
+    `$1${newPluginFunction}$2` // Insert the new plugin function
+  );
+
+  // Write the modified content back to the file
+  fs.writeFileSync(tailwindConfigJsPath, configFileContents);
+}
 
 function modifyFunctionsPhp(dir) {
   const functionsPhpPath = `${dir}/theme/functions.php`;
@@ -139,9 +162,13 @@ async function generateTheme(themeConfig, res) {
   await copyFiles(`${customizationDirectory}/[theme]`, themeDirectory);
 
   modifyFunctionsPhp(themeDirectory);
+  modifyTailwindConfigJs(themeDirectory);
 
   deleteGitDirectories(buildResultDirectory);
-
+  await applyFindAndReplaceToAllFiles(buildResultDirectory, {
+    ...themeConfig,
+    SLUGIFIED_THEME_NAME: slugify(themeConfig.THEME_NAME, { lower: true }),
+  });
   // Stream the ZIP file directly
   await zipBuildResult(themeConfig.THEME_NAME, buildResultDirectory, res);
 }
