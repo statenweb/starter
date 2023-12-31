@@ -6,9 +6,12 @@ const rimraf = require("rimraf");
 const recursiveRead = require("recursive-readdir");
 const archiver = require("archiver");
 const copy = require("recursive-copy");
+const mkdirp = require("mkdirp");
+console.log("hmmm2");
+const workspaceDirectory =
+  process.env.WORKSPACE_DIRECTORY || path.join(__dirname, "../workspace");
 
-const baseDirectory =
-  process.env.BASE_DIRECTORY || path.join(__dirname, "../workspace");
+const baseDirectory = process.env.BASE_DIRECTORY || path.join(__dirname, "../");
 // Modify functions.php file
 
 const copyFiles = async (sourceDir, targetDir) => {
@@ -37,6 +40,7 @@ function modifyFunctionsPhp(dir) {
 
 // Zip build result
 function zipBuildResult(themeName, buildResultDirectory, downloadsDirectory) {
+  console.log("hmmm");
   const baseFilename = `${slugify(themeName, { lower: true })}`;
   let filename = `${baseFilename}.zip`;
 
@@ -53,7 +57,7 @@ function zipBuildResult(themeName, buildResultDirectory, downloadsDirectory) {
 
   output.on("close", () => {
     console.log(`Successfully zipped and saved as: ${filename}`);
-    rimraf.sync(buildResultDirectory);
+    // rimraf.sync(buildResultDirectory);
   });
 
   archive.finalize();
@@ -114,14 +118,12 @@ function findAndReplaceInFile(filePath, replacements) {
 
 // Main function to generate the theme
 async function generateTheme(themeConfig) {
-  const scriptRootDirectory = process.cwd();
-
-  const downloadsDirectory = `${baseDirectory}/files`;
-  const buildResultDirectory = `${baseDirectory}/build_result`;
+  const buildResultDirectory = `${workspaceDirectory}/build_result`;
+  const downloadsDirectory = `${workspaceDirectory}/downloads`;
   const customizationDirectory = `${baseDirectory}/custom_templates`;
 
-  if (!fs.existsSync(downloadsDirectory)) {
-    fs.mkdirSync(downloadsDirectory);
+  if (!fs.existsSync(baseDirectory)) {
+    mkdirp(baseDirectory);
   }
 
   if (fs.existsSync(buildResultDirectory)) {
