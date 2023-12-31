@@ -154,7 +154,8 @@ async function generateTheme(themeConfig, res) {
 
   const env = {
     ...process.env,
-    GIT_SSH_COMMAND: "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
+    GIT_SSH_COMMAND:
+      "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no",
   };
 
   spawnSync(
@@ -162,7 +163,6 @@ async function generateTheme(themeConfig, res) {
     ["clone", "git@github.com:gregsullivan/_tw.git", themeDirectory],
     { stdio: "inherit", env: env }
   );
-}
 
   await copyFiles(`${customizationDirectory}/[root]`, buildResultDirectory);
   await copyFiles(`${customizationDirectory}/[theme]`, themeDirectory);
