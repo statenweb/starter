@@ -152,11 +152,17 @@ async function generateTheme(themeConfig, res) {
   )}`;
   fs.mkdirSync(themeDirectory, { recursive: true });
 
+  const env = {
+    ...process.env,
+    GIT_SSH_COMMAND: "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
+  };
+
   spawnSync(
     "git",
     ["clone", "git@github.com:gregsullivan/_tw.git", themeDirectory],
-    { stdio: "inherit" }
+    { stdio: "inherit", env: env }
   );
+}
 
   await copyFiles(`${customizationDirectory}/[root]`, buildResultDirectory);
   await copyFiles(`${customizationDirectory}/[theme]`, themeDirectory);
