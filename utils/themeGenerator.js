@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 const fs = require("fs");
 const path = require("path");
 const slugify = require("slugify");
@@ -12,7 +14,9 @@ const baseDirectory = process.env.BASE_DIRECTORY || path.join(__dirname, "../");
 const workspaceDirectory =
   process.env.WORKSPACE_DIRECTORY || path.join(__dirname, "../workspace");
 const buildResultDirectory = `${workspaceDirectory}/build_result`;
-
+const repoUrl =
+  process.env.REPO_URL ||
+  "https://github.com/gregsullivan/_tw/archive/refs/heads/master.zip";
 const customizationDirectory = `${baseDirectory}/custom_templates`;
 
 const copyFiles = async (sourceDir, targetDir) => {
@@ -136,6 +140,7 @@ function findAndReplaceInFile(filePath, replacements) {
 
 // Main function to generate the theme
 async function generateTheme(themeConfig, res) {
+  console.log("111");
   if (!fs.existsSync(baseDirectory)) {
     mkdirp(baseDirectory);
   }
@@ -151,18 +156,36 @@ async function generateTheme(themeConfig, res) {
     { lower: true }
   )}`;
   fs.mkdirSync(themeDirectory, { recursive: true });
+  const zipFile = "master.zip";
+  const tempUnzipPath = "temp_unzip_folder";
 
-  const env = {
-    ...process.env,
-    GIT_SSH_COMMAND:
-      "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no",
-  };
+  try {
+    // Download the zip file
+    execSync(`curl -L ${repoUrl} -o ${zipFile}`);
 
-  spawnSync(
-    "git",
-    ["clone", "git@github.com:gregsullivan/_tw.git", themeDirectory],
-    { stdio: "inherit", env: env }
-  );
+    // Create a temporary directory to unzip
+    fs.mkdirSync(tempUnzipPath, { recursive: true });
+
+    // Unzip into the temporary directory
+    execSync(`unzip ${zipFile} -d ${tempUnzipPath}`);
+
+    // Calculate path of the unzipped subdirectory
+    const unzippedSubdirectory = path.join(
+      tempUnzipPath,
+      fs.readdirSync(tempUnzipPath)[0]
+    );
+
+    // Move contents to the themeDirectory
+    execSync(`mv ${unzippedSubdirectory}/* ${themeDirectory}`);
+
+    // Optionally, clean up
+    fs.unlinkSync(zipFile);
+    fs.rmdirSync(tempUnzipPath, { recursive: true });
+
+    console.log("Repository downloaded and unzipped successfully.");
+  } catch (error) {
+    console.error("Error occurred:", error);
+  }
 
   await copyFiles(`${customizationDirectory}/[root]`, buildResultDirectory);
   await copyFiles(`${customizationDirectory}/[theme]`, themeDirectory);
