@@ -19,6 +19,3 @@ $filters->init();
 
 $site = new Site();
 $site->init();
-
-$hero = new Hero();
-$hero->init();

@@ -54,8 +54,8 @@ function updateApplicationPhp(themeDirectory, blocks) {
 
       // Add the new lines to application.php
       applicationPhpContent += `
-${slugifiedClassName} = new \\Victoria\\Blocks\\${className}();\n
-${slugifiedClassName}->init();\n\n`;
+$${slugifiedClassName} = new \\Victoria\\Blocks\\${className}();\n
+$${slugifiedClassName}->init();\n\n`;
     }
   });
 
