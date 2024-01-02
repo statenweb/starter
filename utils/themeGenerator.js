@@ -33,7 +33,7 @@ const copyFiles = async (sourceDir, targetDir) => {
 };
 
 function modifyComposerJson(dir) {
-  const composerJsonPath = path.join(dir, "../composer.json");
+  const composerJsonPath = path.join(dir, "../../composer.json");
 
   // Read the file
   let configFileContents = fs.readFileSync(composerJsonPath, "utf8");
