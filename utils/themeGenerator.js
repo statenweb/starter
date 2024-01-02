@@ -253,8 +253,8 @@ async function generateTheme(themeConfig, res) {
 
   modifyFunctionsPhp(themeDirectory);
   modifyTailwindConfigJs(themeDirectory);
-  cleanUpBlocks(themeDirectory, themeConfig.blocks);
-  updateApplicationPhp(themeDirectory, themeConfig.blocks);
+  cleanUpBlocks(themeDirectory, themeConfig.BLOCKS);
+  updateApplicationPhp(themeDirectory, themeConfig.BLOCKS);
 
   deleteGitDirectories(buildResultDirectory);
   await applyFindAndReplaceToAllFiles(buildResultDirectory, {
