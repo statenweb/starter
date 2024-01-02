@@ -85,7 +85,7 @@ function modifyFunctionsPhp(dir) {
   const functionsPhpContent = fs.readFileSync(functionsPhpPath, "utf8");
   const modifiedContent = functionsPhpContent.replace(
     "<?php",
-    `<?php\nrequire_once __DIR__ . '/../vendor/autoload.php';`
+    `<?php\nrequire_once __DIR__ . '/../vendor/autoload.php';\nrequire_once __DIR__ . '/application.php';`
   );
   fs.writeFileSync(functionsPhpPath, modifiedContent);
 }
