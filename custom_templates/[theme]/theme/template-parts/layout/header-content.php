@@ -22,8 +22,7 @@ $menu_id = 'primary_menu';
 				wp_nav_menu(
 					array(
 						'theme_location'  => 'menu-1',
-
-
+                        'menu_id' => $menu_id,
 						'container' => false,
 						'menu_class' => 'menu-list',
 						'walker'          => new \Victoria\Tailwind_Navwalker(),
