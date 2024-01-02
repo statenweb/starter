@@ -71,21 +71,21 @@ function extractClassName(filePath) {
 }
 
 function cleanUpBlocks(themeDirectory, blocks) {
-  blocks.forEach((block) => {
-    const blockFilesToDelete = [
-      path.join(themeDirectory, "theme", "block", `${block}.php`),
-      path.join(themeDirectory, "theme", "victoria", "blocks", `${block}.php`),
-    ];
+  // Define the directories to check
+  const directories = [
+    path.join(themeDirectory, "theme", "block"),
+    path.join(themeDirectory, "theme", "victoria", "blocks"),
+  ];
 
-    blockFilesToDelete.forEach((blockFilePath) => {
-      // Delete files if they exist and are not named {block}.php
-      if (fs.existsSync(blockFilePath)) {
-        const files = fs.readdirSync(path.dirname(blockFilePath));
-        files.forEach((file) => {
-          if (file !== path.basename(blockFilePath)) {
-            fs.unlinkSync(path.join(path.dirname(blockFilePath), file));
-          }
-        });
+  directories.forEach((dir) => {
+    // Read all files in the directory
+    fs.readdirSync(dir).forEach((file) => {
+      // Check if file is not in the blocks list
+      if (!blocks.includes(file.replace(".php", ""))) {
+        // If not, delete the file
+        const filePath = path.join(dir, file);
+        console.log(`Deleting ${filePath}`);
+        fs.unlinkSync(filePath);
       }
     });
   });
