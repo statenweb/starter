@@ -32,6 +32,57 @@ const copyFiles = async (sourceDir, targetDir) => {
   }
 };
 
+
+function updateApplicationPhp(themeDirectory, blocks) {
+  const blocksDirectory = path.join(themeDirectory, "theme", "victoria", "blocks");
+  const applicationPhpPath = path.join(themeDirectory, "theme", "application.php");
+  let applicationPhpContent = fs.readFileSync(applicationPhpPath, "utf8");
+
+  blocks.forEach(block => {
+    const blockFilePath = path.join(blocksDirectory, `${block}.php`);
+    if (fs.existsSync(blockFilePath)) {
+      const className = extractClassName(blockFilePath);
+      const slugifiedClassName = slugify(className, { lower: true });
+
+      // Add the new lines to application.php
+      applicationPhpContent += `
+${slugifiedClassName} = new \\Victoria\\Blocks\\${className}();\n
+${slugifiedClassName}->init();\n\n`;
+    }
+  });
+
+  // Write the updated content back to application.php
+  fs.writeFileSync(applicationPhpPath, applicationPhpContent);
+}
+
+function extractClassName(filePath) {
+  // Read the file and extract the class name
+  const fileContent = fs.readFileSync(filePath, "utf8");
+  const classMatch = fileContent.match(/class\s+([^\s{]+)/);
+  return classMatch ? classMatch[1] : null;
+}
+
+function cleanUpBlocks(themeDirectory, blocks) {
+  blocks.forEach(block => {
+    const blockFilesToDelete = [
+      path.join(themeDirectory, "theme", "blocks", `${block}.php`),
+      path.join(themeDirectory, "theme", "victoria", "blocks", `${block}.php`)
+    ];
+
+    blockFilesToDelete.forEach(blockFilePath => {
+      // Delete files if they exist and are not named {block}.php
+      if (fs.existsSync(blockFilePath)) {
+        const files = fs.readdirSync(path.dirname(blockFilePath));
+        files.forEach(file => {
+          if (file !== path.basename(blockFilePath)) {
+            fs.unlinkSync(path.join(path.dirname(blockFilePath), file));
+          }
+        });
+      }
+    });
+  });
+}
+
 function modifyTailwindConfigJs(dir) {
   const tailwindConfigJsPath = path.join(dir, "tailwind/tailwind.config.js");
 
@@ -140,7 +191,9 @@ function findAndReplaceInFile(filePath, replacements) {
 
 // Main function to generate the theme
 async function generateTheme(themeConfig, res) {
-  console.log("111");
+  if (!Array.isArray(themeConfig?.blocks)) {
+    themeConfig.blocks = [];
+  }
   if (!fs.existsSync(baseDirectory)) {
     mkdirp(baseDirectory);
   }
@@ -192,7 +245,8 @@ async function generateTheme(themeConfig, res) {
 
   modifyFunctionsPhp(themeDirectory);
   modifyTailwindConfigJs(themeDirectory);
-
+  cleanUpBlocks(themeDirectory, themeConfig.blocks);
+  updateApplicationPhp(themeDirectory, themeConfig.blocks);
 
   deleteGitDirectories(buildResultDirectory);
   await applyFindAndReplaceToAllFiles(buildResultDirectory, {
