@@ -9,10 +9,10 @@ use Victoria\Fields\Subtitle;
 use Victoria\Fields\Title;
 
 
-class Hero extends Block {
+class Dummy extends Block {
 
-	const BLOCK_SLUG = 'hero';
-	const BLOCK_NAME = 'StatenWeb Hero';
+	const BLOCK_SLUG = 'ddd';
+	const BLOCK_NAME = 'StatenWeb ddd';
 
 	public function attach_hooks() {
 		if ( function_exists( 'acf_register_block_type' ) ) {
