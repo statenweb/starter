@@ -1,8 +1,8 @@
 <?php
 
-namespace Victoria\Base;
+namespace Victoria;
 
-abstract class Thing {
+abstract class Base {
 
 	public function init() {
 		$this->attach_hooks();

@@ -2,9 +2,10 @@
 
 namespace Victoria\Settings;
 
-use Victoria\Base\Thing;
+use Victoria\Base;
 
-class Site extends Thing {
+
+class Site extends Base {
 
 	const SLUG = 'site_settings';
 

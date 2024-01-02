@@ -2,10 +2,10 @@
 
 namespace Victoria;
 
-use Victoria\Base\Thing;
+use Victoria\Base;
 
 
-class Actions extends Thing {
+class Actions extends Base {
 
 
 	public function attach_hooks() {

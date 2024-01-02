@@ -2,9 +2,14 @@
 
 namespace Victoria\Blocks;
 
-use Victoria\Base\Thing;
+use StoutLogic\AcfBuilder\FieldsBuilder;
+use Victoria\Base\Block;
+use Victoria\Fields\Background_Image;
+use Victoria\Fields\Subtitle;
+use Victoria\Fields\Title;
 
-class Hero extends Thing {
+
+class Hero extends Block {
 
 	const BLOCK_SLUG = 'hero';
 	const BLOCK_NAME = 'StatenWeb Hero';
@@ -19,7 +24,7 @@ class Hero extends Thing {
 		// register a testimonial block.
 		acf_register_block_type(
 			array(
-				'name'            => sprintf('sw-%s', self::BLOCK_SLUG),
+				'name'            => static::get_name(),
 				'title'           => __( self::BLOCK_NAME ),
 				'description'     => __( self::BLOCK_NAME ),
 				'render_template' => sprintf('block/%s.php', self::BLOCK_SLUG),
@@ -43,6 +48,19 @@ class Hero extends Thing {
 				},
 			)
 		);
+	}
+
+	public function register_fields(): ?FieldsBuilder {
+		$section = new FieldsBuilder('section');
+
+		$section
+
+			->addFields(Title::fields())
+			->addFields(Subtitle::fields())
+			->addFields(Background_Image::fields())
+
+			->setLocation('block', '==', 'acf/'  . self::get_name());
+		return $section;
 	}
 
 }

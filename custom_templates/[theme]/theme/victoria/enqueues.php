@@ -2,9 +2,9 @@
 
 namespace Victoria;
 
-use Victoria\Base\Thing;
+use Victoria\Base;
 
-class Enqueues extends Thing {
+class Enqueues extends Base {
 
 	public function attach_hooks() {
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue' ), 100 );
