@@ -32,6 +32,29 @@ const copyFiles = async (sourceDir, targetDir) => {
   }
 };
 
+function modifyComposerJson(dir) {
+  const composerJsonPath = path.join(dir, "../composer.json");
+
+  // Read the file
+  let configFileContents = fs.readFileSync(composerJsonPath, "utf8");
+
+  // Parse the contents to a JavaScript object
+  let config = JSON.parse(configFileContents);
+
+  // Add the autoload section
+  config.autoload = {
+    "psr-4": {
+      "Victoria\\": "theme/victoria/",
+    },
+  };
+
+  // Convert the JavaScript object back to a JSON string
+  let newConfigFileContents = JSON.stringify(config, null, 4);
+
+  // Write the modified content back to the file
+  fs.writeFileSync(composerJsonPath, newConfigFileContents);
+}
+
 function modifyTailwindConfigJs(dir) {
   const tailwindConfigJsPath = path.join(dir, "tailwind/tailwind.config.js");
 
@@ -192,6 +215,7 @@ async function generateTheme(themeConfig, res) {
 
   modifyFunctionsPhp(themeDirectory);
   modifyTailwindConfigJs(themeDirectory);
+  modifyComposerJson(themeDirectory);
 
   deleteGitDirectories(buildResultDirectory);
   await applyFindAndReplaceToAllFiles(buildResultDirectory, {

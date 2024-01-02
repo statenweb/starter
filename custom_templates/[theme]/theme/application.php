@@ -8,32 +8,6 @@ use Victoria\Blocks\Hero;
 
 
 
-$namespace = ['Victoria'];
-
-\spl_autoload_register(
-	function ( $class ) use ( $namespace ) {
-		$base = explode( '\\', $class );
-		if ( in_array( $base[0], $namespace ) ) {
-			$file = __DIR__ . DIRECTORY_SEPARATOR . strtolower(
-					str_replace(
-						[ '\\', '_' ],
-						[
-							DIRECTORY_SEPARATOR,
-							'-',
-						],
-						$class
-					) . '.php'
-				);
-			if ( file_exists( $file ) ) {
-				require $file;
-			} else {
-				wp_die( sprintf( 'File %s not found', esc_html( $file ) ) );
-			}
-		}
-
-	}
-);
-
 $actions = new Actions;
 $actions->init();
 
