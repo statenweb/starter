@@ -73,7 +73,7 @@ function extractClassName(filePath) {
 function cleanUpBlocks(themeDirectory, blocks) {
   blocks.forEach((block) => {
     const blockFilesToDelete = [
-      path.join(themeDirectory, "theme", "blocks", `${block}.php`),
+      path.join(themeDirectory, "theme", "block", `${block}.php`),
       path.join(themeDirectory, "theme", "victoria", "blocks", `${block}.php`),
     ];
 
