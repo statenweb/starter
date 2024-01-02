@@ -32,13 +32,21 @@ const copyFiles = async (sourceDir, targetDir) => {
   }
 };
 
-
 function updateApplicationPhp(themeDirectory, blocks) {
-  const blocksDirectory = path.join(themeDirectory, "theme", "victoria", "blocks");
-  const applicationPhpPath = path.join(themeDirectory, "theme", "application.php");
+  const blocksDirectory = path.join(
+    themeDirectory,
+    "theme",
+    "victoria",
+    "blocks"
+  );
+  const applicationPhpPath = path.join(
+    themeDirectory,
+    "theme",
+    "application.php"
+  );
   let applicationPhpContent = fs.readFileSync(applicationPhpPath, "utf8");
 
-  blocks.forEach(block => {
+  blocks.forEach((block) => {
     const blockFilePath = path.join(blocksDirectory, `${block}.php`);
     if (fs.existsSync(blockFilePath)) {
       const className = extractClassName(blockFilePath);
@@ -63,17 +71,17 @@ function extractClassName(filePath) {
 }
 
 function cleanUpBlocks(themeDirectory, blocks) {
-  blocks.forEach(block => {
+  blocks.forEach((block) => {
     const blockFilesToDelete = [
       path.join(themeDirectory, "theme", "blocks", `${block}.php`),
-      path.join(themeDirectory, "theme", "victoria", "blocks", `${block}.php`)
+      path.join(themeDirectory, "theme", "victoria", "blocks", `${block}.php`),
     ];
 
-    blockFilesToDelete.forEach(blockFilePath => {
+    blockFilesToDelete.forEach((blockFilePath) => {
       // Delete files if they exist and are not named {block}.php
       if (fs.existsSync(blockFilePath)) {
         const files = fs.readdirSync(path.dirname(blockFilePath));
-        files.forEach(file => {
+        files.forEach((file) => {
           if (file !== path.basename(blockFilePath)) {
             fs.unlinkSync(path.join(path.dirname(blockFilePath), file));
           }
@@ -191,8 +199,8 @@ function findAndReplaceInFile(filePath, replacements) {
 
 // Main function to generate the theme
 async function generateTheme(themeConfig, res) {
-  if (!Array.isArray(themeConfig?.blocks)) {
-    themeConfig.blocks = [];
+  if (!Array.isArray(themeConfig?.BLOCKS)) {
+    themeConfig.BLOCKS = [];
   }
   if (!fs.existsSync(baseDirectory)) {
     mkdirp(baseDirectory);
