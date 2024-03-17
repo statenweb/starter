@@ -21,19 +21,21 @@ exports.helloWorld = (req, res) => {
   res.status(200).json({ message: "Hello World!" });
 };
 
-
 exports.getBlocks = (req, res) => {
-  const themeDirectory = path.join(__dirname, '../custom_templates/[theme]/theme/block');
+  const themeDirectory = path.join(
+    __dirname,
+    "../custom_templates/[theme]/theme/block"
+  );
 
   fs.readdir(themeDirectory, (err, files) => {
     if (err) {
-      console.error('Error reading directory:', err);
-      return res.status(500).send('Error reading blocks directory');
+      console.error("Error reading directory:", err);
+      return res.status(500).send("Error reading blocks directory");
     }
 
     const blockNames = files
-        .filter(file => file.endsWith('.php'))  // Filter .php files
-        .map(file => file.replace('.php', '')); // Remove .php extension
+      .filter((file) => file.endsWith(".php")) // Filter .php files
+      .map((file) => file.replace(".php", "")); // Remove .php extension
 
     res.json(blockNames);
   });
