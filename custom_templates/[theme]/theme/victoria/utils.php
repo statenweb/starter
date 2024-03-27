@@ -1,6 +1,6 @@
 <?php
 
-namespace theme\victoria;
+namespace Victoria;
 
 class Utils {
 
