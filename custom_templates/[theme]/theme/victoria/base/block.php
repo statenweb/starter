@@ -38,7 +38,7 @@ abstract class Block extends Base {
 	}
 
 	public static function get_name(){
-		return sprintf('sw-%s', self::BLOCK_SLUG);
+		return sprintf('sw-%s', static::BLOCK_SLUG);
 	}
 
 
